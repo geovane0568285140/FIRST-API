@@ -1,9 +1,14 @@
 
 # Gradlew
- Not forget recreated gradlew:
-<br>
- ./gradlew build
 
+First create folder resources and file application.properties 
+src/main/resources/application.properties
+
+ after this create gradlew:
+<br>
+```bash
+ ./gradlew build
+```
 # File properties
 ## **Configuration for running API in file properties:**
 
