@@ -1,5 +1,6 @@
 package com.frota.project.repository;
 
+import com.frota.project.dtos.carRequest.OutPutCarRequestRecordDto;
 import com.frota.project.dtos.carRequest.OutPutCarRequestUUIDandStatus;
 import com.frota.project.model.CarRequestModel;
 import org.springframework.data.domain.Page;
@@ -26,5 +27,4 @@ public interface CarRequestRepository extends JpaRepository<CarRequestModel, UUI
             "AND c.status = :statusParam " +
             "ORDER BY c.requested_at DESC")
     Page<OutPutCarRequestUUIDandStatus> findLastRequestsStatusInPending(@Param("userFk") UUID userFk, @Param("statusParam") String statusParam, Pageable pageable);
-
 }

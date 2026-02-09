@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public record OutPutCarRequestRecordDto(
         UUID uuid,
-        UUID fk_user,
+        String name_user,
         String origin,
         String destination,
         String reason,

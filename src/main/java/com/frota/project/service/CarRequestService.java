@@ -109,7 +109,7 @@ public class CarRequestService {
 
             return Optional.of(new OutPutCarRequestRecordDto(
                     c.getId_car_request(),
-                    c.getFk_user().getId_user(),
+                    c.getFk_user().getNameUser(),
                     c.getOrigin(),
                     c.getDestination(),
                     c.getReason(),
