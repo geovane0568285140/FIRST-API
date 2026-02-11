@@ -4,22 +4,18 @@ package com.frota.project.controller;
 import com.frota.project.dtos.carRequest.InputCarRequestRecordDto;
 import com.frota.project.dtos.carRequest.OutPutCarRequestRecordDto;
 import com.frota.project.dtos.carRequest.OutPutCarRequestUUIDandStatus;
-import com.frota.project.model.CarRequestModel;
 import com.frota.project.service.CarRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/frotas/requests")
+    @RequestMapping("/frotas/requests")
 public class CarRequestController {
 
     @Autowired
@@ -31,7 +27,7 @@ public class CarRequestController {
     }
 
     @PutMapping({"update/{uuid}"})
-    public ResponseEntity updateRequest(@PathVariable UUID uuid, @RequestBody InputCarRequestRecordDto data) {
+    public ResponseEntity<?> updateRequest(@PathVariable UUID uuid, @RequestBody InputCarRequestRecordDto data) {
         return carRequestService.update(uuid, data);
     }
 

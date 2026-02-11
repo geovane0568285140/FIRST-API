@@ -11,7 +11,6 @@ import com.frota.project.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -62,7 +61,7 @@ public class CarRequestService {
     }
 
     @Transactional
-    public ResponseEntity<String> update(UUID uuid, InputCarRequestRecordDto dto) {
+    public ResponseEntity<?> update(UUID uuid, InputCarRequestRecordDto dto) {
         try {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -76,12 +75,15 @@ public class CarRequestService {
 
             if (carRequestModel == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERROR - Request not found");
+                //return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERROR - Request not found");
             }
-            if (!carRequestModel.getStatus().equals("Pendente") && user.getType_user() != UserRole.ADMIN){
+            if (!carRequestModel.getStatus().equals("Pendente") && user.getType_user() != UserRole.ADMIN) {
                 return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("ERROR - User without permission");
+                // return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("ERROR - User without permission");
             }
-            if (user.getType_user() == UserRole.USER){
+            if (user.getType_user() == UserRole.USER) {
                 return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("ERROR - User without permission");
+                //return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("ERROR - User without permission");
             }
 
             if (dto.origin() != null) carRequestModel.setOrigin(dto.origin());
@@ -91,10 +93,16 @@ public class CarRequestService {
             if (dto.status() != null) carRequestModel.setStatus(dto.status());
             if (dto.active() != null) carRequestModel.setActive(dto.active());
 
-            carRequestRepository.save(carRequestModel);
-            return ResponseEntity.status(HttpStatus.OK).body("success update");
+            CarRequestModel dataUpdate = carRequestRepository.save(carRequestModel);
+            return ResponseEntity.status(HttpStatus.OK).body(new OutPutCarRequestRecordDto(dataUpdate.getId_car_request(),
+                    dataUpdate.getFk_user().getNameUser(),
+                    dataUpdate.getOrigin(),
+                    dataUpdate.getDestination(),
+                    dataUpdate.getReason(),
+                    dataUpdate.getRequested_at(),
+                    dataUpdate.getStatus()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("ERROR - methodo in class CarRequestService");
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("ERROR - methodo in class CarRequestService");
         }
     }
 
