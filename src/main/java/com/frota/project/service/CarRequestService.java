@@ -96,6 +96,7 @@ public class CarRequestService {
             CarRequestModel dataUpdate = carRequestRepository.save(carRequestModel);
             return ResponseEntity.status(HttpStatus.OK).body(new OutPutCarRequestRecordDto(dataUpdate.getId_car_request(),
                     dataUpdate.getFk_user().getNameUser(),
+                    dataUpdate.getN_mov(),
                     dataUpdate.getOrigin(),
                     dataUpdate.getDestination(),
                     dataUpdate.getReason(),
@@ -118,6 +119,7 @@ public class CarRequestService {
             return Optional.of(new OutPutCarRequestRecordDto(
                     c.getId_car_request(),
                     c.getFk_user().getNameUser(),
+                    c.getN_mov(),
                     c.getOrigin(),
                     c.getDestination(),
                     c.getReason(),
