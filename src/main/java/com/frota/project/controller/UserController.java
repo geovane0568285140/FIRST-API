@@ -1,6 +1,7 @@
 package com.frota.project.controller;
 
 import com.frota.project.dtos.users.InputUserRecordDto;
+import com.frota.project.dtos.users.OutPutFirstNameUser;
 import com.frota.project.dtos.users.OutPutUserRecordDto;
 import com.frota.project.dtos.users.RegisterRecordDto;
 import com.frota.project.service.UserService;
@@ -29,8 +30,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<com.frota.project.model.UserModel>> geALL(){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getALL());
+    public ResponseEntity<List<OutPutFirstNameUser>> geALL(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size){
+        return userService.getFirstsUser(page, size);
     }
 
     @PostMapping("/register")

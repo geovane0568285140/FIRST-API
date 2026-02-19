@@ -172,8 +172,6 @@ public class CarRequestService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UUID uuidUser = UUID.fromString(authentication.getName());
-
-
             return carRequestRepository.findLastRequests(uuidUser,
                     PageRequest.of(page, size)).getContent().stream().map(e -> new OutPutCarRequestUUIDandStatus(
                     e.uuid(),

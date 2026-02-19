@@ -1,19 +1,25 @@
 package com.frota.project.service;
 
 import com.frota.project.dtos.users.InputUserRecordDto;
+import com.frota.project.dtos.users.OutPutFirstNameUser;
 import com.frota.project.dtos.users.OutPutUserRecordDto;
 import com.frota.project.dtos.users.RegisterRecordDto;
 import com.frota.project.model.UserModel;
+import com.frota.project.model.UserRole;
 import com.frota.project.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -29,8 +35,26 @@ public class UserService {
     }
 
     @Transactional
-    public List<UserModel> getALL() {
-        return userRepository.findAll();
+    public ResponseEntity<List<OutPutFirstNameUser>> getFirstsUser(int page, int size) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            UserModel user = userRepository.findById(UUID.fromString(authentication.getName())).orElseThrow(() -> new RuntimeException(
+                    "ERROR in findById -- User"));
+
+            if (user.getType_user() != UserRole.ADMIN) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Collections.emptyList());
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(userRepository.findFirstsNameUsers(PageRequest.of(page,
+                    size)).getContent().stream().map(e -> new OutPutFirstNameUser(e.uuidUser(),
+                    e.nameUser())).toList());
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+
+        }
     }
 
     @Transactional
@@ -71,7 +95,19 @@ public class UserService {
         if (name != null) return ResponseEntity.badRequest().build();
 
         String encryptePassword = new BCryptPasswordEncoder().encode(dto.password());
-        UserModel newUser = new UserModel(dto.full_name(), dto.name_user(), encryptePassword, dto.email(), dto.type_user(), dto.active(), dto.cpf(), dto.date_brith(), dto.num_cnh(), dto.category_cnh(), dto.date_emission_cnh(), dto.date_validity_cnh(), dto.registration_renach_cnh());
+        UserModel newUser = new UserModel(dto.full_name(),
+                dto.name_user(),
+                encryptePassword,
+                dto.email(),
+                dto.type_user(),
+                dto.active(),
+                dto.cpf(),
+                dto.date_brith(),
+                dto.num_cnh(),
+                dto.category_cnh(),
+                dto.date_emission_cnh(),
+                dto.date_validity_cnh(),
+                dto.registration_renach_cnh());
 
         this.userRepository.save(newUser);
         return ResponseEntity.ok().build();
@@ -81,7 +117,8 @@ public class UserService {
         try {
             UserModel usermodel;
             try {
-                usermodel = userRepository.findById(uuid).orElseThrow(() -> new RuntimeException("ERROR - finById in runtime"));
+                usermodel = userRepository.findById(uuid).orElseThrow(() -> new RuntimeException(
+                        "ERROR - finById in runtime"));
             } catch (Exception e) {
                 return "ERROR - in localization from car";
             }
@@ -107,7 +144,8 @@ public class UserService {
         try {
             UserModel userModel;
             try {
-                userModel = userRepository.findById(uuid).orElseThrow(() -> new RuntimeException("ERROR - findById in runtime"));
+                userModel = userRepository.findById(uuid).orElseThrow(() -> new RuntimeException(
+                        "ERROR - findById in runtime"));
             } catch (Exception e) {
                 return "ERROR - in localization from user";
             }
